@@ -32,6 +32,10 @@ typedef struct PlayerState {
     int audio_stream;
     int video_stream;
     PacketQueue *buffer_indicator_queue;
+    
+    Decoder auddec;
+    Decoder viddec;
+    SDL_cond *continue_read_thread;
 
 } PlayerState;
 
