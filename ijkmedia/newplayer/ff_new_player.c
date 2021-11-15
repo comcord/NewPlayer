@@ -44,11 +44,20 @@
 #endif
 
 #include "ijksdl/ijksdl_log.h"
+#include "ijkavformat.h"
+
 #include <stdio.h>
+
+static AVPacket flush_pkt;
+
 
 int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last);
 int packet_queue_init(PacketQueue *q);
 void print_error(const char *filename, int err);
+int packet_queue_put_nullpacket(PacketQueue *q, int stream_index);
+int packet_queue_put_nullpacket(PacketQueue *q, int stream_index);
+int packet_queue_put_private(PacketQueue *q, AVPacket *pkt);
+int packet_queue_put(PacketQueue *q, AVPacket *pkt);
 static int video_refresh_thread(void *arg){
     return 0;
 }
@@ -228,25 +237,25 @@ static int stream_component_open(NewFFPlayer *ffp, int stream_index)
     switch (avctx->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
 #if CONFIG_AVFILTER
-        {
-            AVFilterContext *sink;
-
-            is->audio_filter_src.freq           = avctx->sample_rate;
-            is->audio_filter_src.channels       = avctx->channels;
-            is->audio_filter_src.channel_layout = get_valid_channel_layout(avctx->channel_layout, avctx->channels);
-            is->audio_filter_src.fmt            = avctx->sample_fmt;
-            SDL_LockMutex(ffp->af_mutex);
-            if ((ret = configure_audio_filters(ffp, ffp->afilters, 0)) < 0) {
-                SDL_UnlockMutex(ffp->af_mutex);
-                goto fail;
-            }
-            ffp->af_changed = 0;
-            SDL_UnlockMutex(ffp->af_mutex);
-            sink = is->out_audio_filter;
-            sample_rate    = av_buffersink_get_sample_rate(sink);
-            nb_channels    = av_buffersink_get_channels(sink);
-            channel_layout = av_buffersink_get_channel_layout(sink);
-        }
+//        {
+//            AVFilterContext *sink;
+//
+//            is->audio_filter_src.freq           = avctx->sample_rate;
+//            is->audio_filter_src.channels       = avctx->channels;
+//            is->audio_filter_src.channel_layout = get_valid_channel_layout(avctx->channel_layout, avctx->channels);
+//            is->audio_filter_src.fmt            = avctx->sample_fmt;
+//            SDL_LockMutex(ffp->af_mutex);
+//            if ((ret = configure_audio_filters(ffp, ffp->afilters, 0)) < 0) {
+//                SDL_UnlockMutex(ffp->af_mutex);
+//                goto fail;
+//            }
+//            ffp->af_changed = 0;
+//            SDL_UnlockMutex(ffp->af_mutex);
+//            sink = is->out_audio_filter;
+//            sample_rate    = av_buffersink_get_sample_rate(sink);
+//            nb_channels    = av_buffersink_get_channels(sink);
+//            channel_layout = av_buffersink_get_channel_layout(sink);
+//        }
 #else
         sample_rate    = avctx->sample_rate;
         nb_channels    = avctx->channels;
@@ -254,103 +263,103 @@ static int stream_component_open(NewFFPlayer *ffp, int stream_index)
 #endif
 
         /* prepare audio output */
-        if ((ret = audio_open(ffp, channel_layout, nb_channels, sample_rate, &is->audio_tgt)) < 0)
-            goto fail;
-        ffp_set_audio_codec_info(ffp, AVCODEC_MODULE_NAME, avcodec_get_name(avctx->codec_id));
-        is->audio_hw_buf_size = ret;
-        is->audio_src = is->audio_tgt;
-        is->audio_buf_size  = 0;
-        is->audio_buf_index = 0;
-
-        /* init averaging filter */
-        is->audio_diff_avg_coef  = exp(log(0.01) / AUDIO_DIFF_AVG_NB);
-        is->audio_diff_avg_count = 0;
-        /* since we do not have a precise anough audio FIFO fullness,
-           we correct audio sync only if larger than this threshold */
-        is->audio_diff_threshold = 2.0 * is->audio_hw_buf_size / is->audio_tgt.bytes_per_sec;
-
-        is->audio_stream = stream_index;
-        is->audio_st = ic->streams[stream_index];
-
-        decoder_init(&is->auddec, avctx, &is->audioq, is->continue_read_thread);
-        if ((is->ic->iformat->flags & (AVFMT_NOBINSEARCH | AVFMT_NOGENSEARCH | AVFMT_NO_BYTE_SEEK)) && !is->ic->iformat->read_seek) {
-            is->auddec.start_pts = is->audio_st->start_time;
-            is->auddec.start_pts_tb = is->audio_st->time_base;
-        }
-        if ((ret = decoder_start(&is->auddec, audio_thread, ffp, "ff_audio_dec")) < 0)
-            goto out;
-        SDL_AoutPauseAudio(ffp->aout, 0);
+//        if ((ret = audio_open(ffp, channel_layout, nb_channels, sample_rate, &is->audio_tgt)) < 0)
+//            goto fail;
+//        ffp_set_audio_codec_info(ffp, AVCODEC_MODULE_NAME, avcodec_get_name(avctx->codec_id));
+//        is->audio_hw_buf_size = ret;
+//        is->audio_src = is->audio_tgt;
+//        is->audio_buf_size  = 0;
+//        is->audio_buf_index = 0;
+//
+//        /* init averaging filter */
+//        is->audio_diff_avg_coef  = exp(log(0.01) / AUDIO_DIFF_AVG_NB);
+//        is->audio_diff_avg_count = 0;
+//        /* since we do not have a precise anough audio FIFO fullness,
+//           we correct audio sync only if larger than this threshold */
+//        is->audio_diff_threshold = 2.0 * is->audio_hw_buf_size / is->audio_tgt.bytes_per_sec;
+//
+//        is->audio_stream = stream_index;
+//        is->audio_st = ic->streams[stream_index];
+//
+//        decoder_init(&is->auddec, avctx, &is->audioq, is->continue_read_thread);
+//        if ((is->ic->iformat->flags & (AVFMT_NOBINSEARCH | AVFMT_NOGENSEARCH | AVFMT_NO_BYTE_SEEK)) && !is->ic->iformat->read_seek) {
+//            is->auddec.start_pts = is->audio_st->start_time;
+//            is->auddec.start_pts_tb = is->audio_st->time_base;
+//        }
+//        if ((ret = decoder_start(&is->auddec, audio_thread, ffp, "ff_audio_dec")) < 0)
+//            goto out;
+//        SDL_AoutPauseAudio(ffp->aout, 0);
         break;
     case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
         is->video_st = ic->streams[stream_index];
 
-        if (ffp->async_init_decoder) {
-            while (!is->initialized_decoder) {
-                SDL_Delay(5);
-            }
-            if (ffp->node_vdec) {
-                is->viddec.avctx = avctx;
-                ret = ffpipeline_config_video_decoder(ffp->pipeline, ffp);
-            }
-            if (ret || !ffp->node_vdec) {
-                decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread);
-                ffp->node_vdec = ffpipeline_open_video_decoder(ffp->pipeline, ffp);
-                if (!ffp->node_vdec)
-                    goto fail;
-            }
-        } else {
-            decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread);
-            ffp->node_vdec = ffpipeline_open_video_decoder(ffp->pipeline, ffp);
-            if (!ffp->node_vdec)
-                goto fail;
-        }
-        if ((ret = decoder_start(&is->viddec, video_thread, ffp, "ff_video_dec")) < 0)
-            goto out;
-
-        is->queue_attachments_req = 1;
-
-        if (ffp->max_fps >= 0) {
-            if(is->video_st->avg_frame_rate.den && is->video_st->avg_frame_rate.num) {
-                double fps = av_q2d(is->video_st->avg_frame_rate);
-                SDL_ProfilerReset(&is->viddec.decode_profiler, fps + 0.5);
-                if (fps > ffp->max_fps && fps < 130.0) {
-                    is->is_video_high_fps = 1;
-                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", fps);
-                } else {
-                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (normal)\n", fps);
-                }
-            }
-            if(is->video_st->r_frame_rate.den && is->video_st->r_frame_rate.num) {
-                double tbr = av_q2d(is->video_st->r_frame_rate);
-                if (tbr > ffp->max_fps && tbr < 130.0) {
-                    is->is_video_high_fps = 1;
-                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", tbr);
-                } else {
-                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (normal)\n", tbr);
-                }
-            }
-        }
-
-        if (is->is_video_high_fps) {
-            avctx->skip_frame       = FFMAX(avctx->skip_frame, AVDISCARD_NONREF);
-            avctx->skip_loop_filter = FFMAX(avctx->skip_loop_filter, AVDISCARD_NONREF);
-            avctx->skip_idct        = FFMAX(avctx->skip_loop_filter, AVDISCARD_NONREF);
-        }
+//        if (ffp->async_init_decoder) {
+//            while (!is->initialized_decoder) {
+//                SDL_Delay(5);
+//            }
+//            if (ffp->node_vdec) {
+//                is->viddec.avctx = avctx;
+//                ret = ffpipeline_config_video_decoder(ffp->pipeline, ffp);
+//            }
+//            if (ret || !ffp->node_vdec) {
+//                decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread);
+//                ffp->node_vdec = ffpipeline_open_video_decoder(ffp->pipeline, ffp);
+//                if (!ffp->node_vdec)
+//                    goto fail;
+//            }
+//        } else {
+//            decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread);
+//            ffp->node_vdec = ffpipeline_open_video_decoder(ffp->pipeline, ffp);
+//            if (!ffp->node_vdec)
+//                goto fail;
+//        }
+//        if ((ret = decoder_start(&is->viddec, video_thread, ffp, "ff_video_dec")) < 0)
+//            goto out;
+//
+//        is->queue_attachments_req = 1;
+//
+//        if (ffp->max_fps >= 0) {
+//            if(is->video_st->avg_frame_rate.den && is->video_st->avg_frame_rate.num) {
+//                double fps = av_q2d(is->video_st->avg_frame_rate);
+//                SDL_ProfilerReset(&is->viddec.decode_profiler, fps + 0.5);
+//                if (fps > ffp->max_fps && fps < 130.0) {
+//                    is->is_video_high_fps = 1;
+//                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", fps);
+//                } else {
+//                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (normal)\n", fps);
+//                }
+//            }
+//            if(is->video_st->r_frame_rate.den && is->video_st->r_frame_rate.num) {
+//                double tbr = av_q2d(is->video_st->r_frame_rate);
+//                if (tbr > ffp->max_fps && tbr < 130.0) {
+//                    is->is_video_high_fps = 1;
+//                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (too high)\n", tbr);
+//                } else {
+//                    av_log(ffp, AV_LOG_WARNING, "fps: %lf (normal)\n", tbr);
+//                }
+//            }
+//        }
+//
+//        if (is->is_video_high_fps) {
+//            avctx->skip_frame       = FFMAX(avctx->skip_frame, AVDISCARD_NONREF);
+//            avctx->skip_loop_filter = FFMAX(avctx->skip_loop_filter, AVDISCARD_NONREF);
+//            avctx->skip_idct        = FFMAX(avctx->skip_loop_filter, AVDISCARD_NONREF);
+//        }
 
         break;
-    case AVMEDIA_TYPE_SUBTITLE:
-        if (!ffp->subtitle) break;
-
-        is->subtitle_stream = stream_index;
-        is->subtitle_st = ic->streams[stream_index];
-
-        ffp_set_subtitle_codec_info(ffp, AVCODEC_MODULE_NAME, avcodec_get_name(avctx->codec_id));
-
-        decoder_init(&is->subdec, avctx, &is->subtitleq, is->continue_read_thread);
-        if ((ret = decoder_start(&is->subdec, subtitle_thread, ffp, "ff_subtitle_dec")) < 0)
-            goto out;
-        break;
+//    case AVMEDIA_TYPE_SUBTITLE:
+//        if (!ffp->subtitle) break;
+//
+//        is->subtitle_stream = stream_index;
+//        is->subtitle_st = ic->streams[stream_index];
+//
+//        ffp_set_subtitle_codec_info(ffp, AVCODEC_MODULE_NAME, avcodec_get_name(avctx->codec_id));
+//
+//        decoder_init(&is->subdec, avctx, &is->subtitleq, is->continue_read_thread);
+//        if ((ret = decoder_start(&is->subdec, subtitle_thread, ffp, "ff_subtitle_dec")) < 0)
+//            goto out;
+//        break;
     default:
         break;
     }
@@ -615,8 +624,9 @@ out:
          if (ret < 0) {
              int pb_eof = 0;
              int pb_error = 0;
-             if ((ret == AVERROR_EOF || avio_feof(ic->pb)) && !is->eof) {
-                 ffp_check_buffering_l(ffp);
+//             if ((ret == AVERROR_EOF || avio_feof(ic->pb)) && !is->eof)
+             if ((ret == AVERROR_EOF || avio_feof(ic->pb))) {
+               //  ffp_check_buffering_l(ffp);
                  pb_eof = 1;
                  // check error later
              }
@@ -634,9 +644,9 @@ out:
                      packet_queue_put_nullpacket(&is->videoq, is->video_stream);
                  if (is->audio_stream >= 0)
                      packet_queue_put_nullpacket(&is->audioq, is->audio_stream);
-                 if (is->subtitle_stream >= 0)
-                     packet_queue_put_nullpacket(&is->subtitleq, is->subtitle_stream);
-                 is->eof = 1;
+//                 if (is->subtitle_stream >= 0)
+//                     packet_queue_put_nullpacket(&is->subtitleq, is->subtitle_stream);
+//                 is->eof = 1;
              }
              if (pb_error) {
                  if (is->video_stream >= 0)
@@ -645,24 +655,24 @@ out:
                      packet_queue_put_nullpacket(&is->audioq, is->audio_stream);
 //                 if (is->subtitle_stream >= 0)
 //                     packet_queue_put_nullpacket(&is->subtitleq, is->subtitle_stream);
-                 is->eof = 1;
-                 ffp->error = pb_error;
-                 av_log(ffp, AV_LOG_ERROR, "av_read_frame error: %s\n", ffp_get_error_string(ffp->error));
+                // is->eof = 1;
+//                 ffp->error = pb_error;
+//                 av_log(ffp, AV_LOG_ERROR, "av_read_frame error: %s\n", ffp_get_error_string(ffp->error));
                  // break;
              } else {
-                 ffp->error = 0;
+                 //ffp->error = 0;
              }
-             if (is->eof) {
-                 ffp_toggle_buffering(ffp, 0);
-                 SDL_Delay(100);
-             }
+//             if (is->eof) {
+//                 ffp_toggle_buffering(ffp, 0);
+//                 SDL_Delay(100);
+//             }
 //             SDL_LockMutex(wait_mutex);
 //             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
 //             SDL_UnlockMutex(wait_mutex);
 //             ffp_statistic_l(ffp);
              continue;
          } else {
-             is->eof = 0;
+           //  is->eof = 0;
          }
 
          if (pkt->flags & AV_PKT_FLAG_DISCONTINUITY) {
@@ -678,21 +688,24 @@ out:
          }
 
          /* check if packet is in play range specified by user, then queue, otherwise discard */
-         stream_start_time = ic->streams[pkt->stream_index]->start_time;
-         pkt_ts = pkt->pts == AV_NOPTS_VALUE ? pkt->dts : pkt->pts;
-         pkt_in_play_range = ffp->duration == AV_NOPTS_VALUE ||
-                 (pkt_ts - (stream_start_time != AV_NOPTS_VALUE ? stream_start_time : 0)) *
-                 av_q2d(ic->streams[pkt->stream_index]->time_base) -
-                 (double)(ffp->start_time != AV_NOPTS_VALUE ? ffp->start_time : 0) / 1000000
-                 <= ((double)ffp->duration / 1000000);
+//         stream_start_time = ic->streams[pkt->stream_index]->start_time;
+//         pkt_ts = pkt->pts == AV_NOPTS_VALUE ? pkt->dts : pkt->pts;
+//         pkt_in_play_range = ffp->duration == AV_NOPTS_VALUE ||
+//                 (pkt_ts - (stream_start_time != AV_NOPTS_VALUE ? stream_start_time : 0)) *
+//                 av_q2d(ic->streams[pkt->stream_index]->time_base) -
+//                 (double)(ffp->start_time != AV_NOPTS_VALUE ? ffp->start_time : 0) / 1000000
+//                 <= ((double)ffp->duration / 1000000);
+         int pkt_in_play_range = 1;
          if (pkt->stream_index == is->audio_stream && pkt_in_play_range) {
              packet_queue_put(&is->audioq, pkt);
          } else if (pkt->stream_index == is->video_stream && pkt_in_play_range
                     && !(is->video_st && (is->video_st->disposition & AV_DISPOSITION_ATTACHED_PIC))) {
              packet_queue_put(&is->videoq, pkt);
-         } else if (pkt->stream_index == is->subtitle_stream && pkt_in_play_range) {
-             packet_queue_put(&is->subtitleq, pkt);
-         } else {
+             
+         }
+//         } else if (pkt->stream_index == is->subtitle_stream && pkt_in_play_range) {
+//             packet_queue_put(&is->subtitleq, pkt);
+          else {
              av_packet_unref(pkt);
          }
 
@@ -719,19 +732,10 @@ out:
 //                 }
 //             }
 //         }
+  //   }
      }
 
      ret = 0;
-  fail:
-     if (ic && !is->ic)
-         avformat_close_input(&ic);
-
-     if (!ffp->prepared || !is->abort_request) {
-         ffp->last_error = last_error;
-         ffp_notify_msg2(ffp, FFP_MSG_ERROR, last_error);
-     }
-     
-     
  fail:
     if (ic)
         avformat_close_input(&ic);

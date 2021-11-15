@@ -140,7 +140,7 @@ int64_t get_valid_channel_layout(int64_t channel_layout, int channels)
 
 static void free_picture(Frame *vp);
 
-static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt)
+int packet_queue_put_private(PacketQueue *q, AVPacket *pkt)
 {
     MyAVPacketList *pkt1;
 
