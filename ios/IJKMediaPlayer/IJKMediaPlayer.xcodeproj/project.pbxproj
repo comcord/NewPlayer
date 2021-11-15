@@ -170,6 +170,9 @@
 		54CF8A521E15287D00309DD5 /* ijktree.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A461E15287D00309DD5 /* ijktree.h */; };
 		54CF8A531E15287D00309DD5 /* ijkutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 54CF8A471E15287D00309DD5 /* ijkutils.c */; };
 		54CF8A541E15287D00309DD5 /* ijkutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CF8A481E15287D00309DD5 /* ijkutils.h */; };
+		ACBCBCF62742110E0074D355 /* ff_new_player.c in Sources */ = {isa = PBXBuildFile; fileRef = ACBCBCF32742110E0074D355 /* ff_new_player.c */; };
+		ACBCBCF72742110E0074D355 /* ff_new_player_def.h in Headers */ = {isa = PBXBuildFile; fileRef = ACBCBCF42742110E0074D355 /* ff_new_player_def.h */; };
+		ACBCBCF82742110E0074D355 /* ff_new_player.h in Headers */ = {isa = PBXBuildFile; fileRef = ACBCBCF52742110E0074D355 /* ff_new_player.h */; };
 		B417F8DE24F7C3B500D159BB /* cJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B417F8DB24F7C3B400D159BB /* cJSON.h */; };
 		B417F8E224F7C56C00D159BB /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = B417F8E124F7C56C00D159BB /* cJSON.c */; };
 		B4449BD6250095700074CEDC /* ijklas.h in Headers */ = {isa = PBXBuildFile; fileRef = B4449BD4250095700074CEDC /* ijklas.h */; };
@@ -326,6 +329,9 @@
 		54CF8A461E15287D00309DD5 /* ijktree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijktree.h; sourceTree = "<group>"; };
 		54CF8A471E15287D00309DD5 /* ijkutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ijkutils.c; sourceTree = "<group>"; };
 		54CF8A481E15287D00309DD5 /* ijkutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijkutils.h; sourceTree = "<group>"; };
+		ACBCBCF32742110E0074D355 /* ff_new_player.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ff_new_player.c; sourceTree = "<group>"; };
+		ACBCBCF42742110E0074D355 /* ff_new_player_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ff_new_player_def.h; sourceTree = "<group>"; };
+		ACBCBCF52742110E0074D355 /* ff_new_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ff_new_player.h; sourceTree = "<group>"; };
 		B417F8DB24F7C3B400D159BB /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cJSON.h; sourceTree = "<group>"; };
 		B417F8E124F7C56C00D159BB /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
 		B4449BD4250095700074CEDC /* ijklas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijklas.h; sourceTree = "<group>"; };
@@ -546,6 +552,16 @@
 			path = IJKMediaFrameworkWithSSL;
 			sourceTree = "<group>";
 		};
+		ACBCBCF22742110E0074D355 /* newplayer */ = {
+			isa = PBXGroup;
+			children = (
+				ACBCBCF32742110E0074D355 /* ff_new_player.c */,
+				ACBCBCF42742110E0074D355 /* ff_new_player_def.h */,
+				ACBCBCF52742110E0074D355 /* ff_new_player.h */,
+			);
+			path = newplayer;
+			sourceTree = "<group>";
+		};
 		E63FC27217F013DE003551EB /* dummy */ = {
 			isa = PBXGroup;
 			children = (
@@ -728,6 +744,7 @@
 		E6903FCC17EAFC6100CFD954 /* ijkmedia */ = {
 			isa = PBXGroup;
 			children = (
+				ACBCBCF22742110E0074D355 /* newplayer */,
 				E6903FCE17EAFC6100CFD954 /* ijkplayer */,
 				E6903FDF17EAFC6100CFD954 /* ijksdl */,
 			);
@@ -1027,6 +1044,7 @@
 				E6C459841C7030AA004831EC /* ijksdl_gles2.h in Headers */,
 				E6C459BB1C706A13004831EC /* ijksdl_egl.h in Headers */,
 				E6C459BD1C7089AB004831EC /* ff_ffplay_options.h in Headers */,
+				ACBCBCF82742110E0074D355 /* ff_new_player.h in Headers */,
 				E654EA8F1B6B27E600B0F2D0 /* IJKMediaFramework.h in Headers */,
 				E6C2E7BE1C92BD3600E59229 /* IJKKVOController.h in Headers */,
 				E69808A01C7EB2040048A46C /* IJKNotificationManager.h in Headers */,
@@ -1036,6 +1054,7 @@
 				54CF8A4E1E15287D00309DD5 /* ijkstl.h in Headers */,
 				4D32BC811F906E3A00CE9F03 /* IJKSDLGLViewProtocol.h in Headers */,
 				E654EAE61B6B295200B0F2D0 /* IJKMediaModule.h in Headers */,
+				ACBCBCF72742110E0074D355 /* ff_new_player_def.h in Headers */,
 				54CF8A4C1E15287D00309DD5 /* ijkfifo.h in Headers */,
 				54CF8A521E15287D00309DD5 /* ijktree.h in Headers */,
 				E69BE5571B93FED300AFBA3F /* opt.h in Headers */,
@@ -1386,6 +1405,7 @@
 				E654EAA81B6B283D00B0F2D0 /* IJKAVPlayerLayerView.m in Sources */,
 				E68B7AC61C1E7F20001DE241 /* IJKSDLHudViewController.m in Sources */,
 				E654EACA1B6B288A00B0F2D0 /* ijksdl_vout_ios_gles2.m in Sources */,
+				ACBCBCF62742110E0074D355 /* ff_new_player.c in Sources */,
 				54A029B81D4700E6001C61C1 /* ijklongurl.c in Sources */,
 				E6C459C01C708CAF004831EC /* renderer_rgb.c in Sources */,
 				E654EABA1B6B286B00B0F2D0 /* ffpipeline_ffplay.c in Sources */,
