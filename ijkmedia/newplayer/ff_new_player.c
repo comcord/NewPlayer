@@ -1627,7 +1627,7 @@ int  ffp_new_prepare_async_l(NewFFPlayer *ffp, const char *file_name){
     ffp->vout = SDL_VoutIos_CreateForGLES2();
     ffp->aout = SDL_AoutIos_CreateForAudioUnit();
     ffp->overlay_format         = SDL_FCC_RV32;
-    int pictq_size = 100;
+    int pictq_size = 10;
     if (frame_queue_init(&is->pictq, &is->videoq, pictq_size, 1) < 0)
         goto fail;
     
