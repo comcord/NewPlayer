@@ -173,6 +173,8 @@
 		ACBCBCF62742110E0074D355 /* ff_new_player.c in Sources */ = {isa = PBXBuildFile; fileRef = ACBCBCF32742110E0074D355 /* ff_new_player.c */; };
 		ACBCBCF72742110E0074D355 /* ff_new_player_def.h in Headers */ = {isa = PBXBuildFile; fileRef = ACBCBCF42742110E0074D355 /* ff_new_player_def.h */; };
 		ACBCBCF82742110E0074D355 /* ff_new_player.h in Headers */ = {isa = PBXBuildFile; fileRef = ACBCBCF52742110E0074D355 /* ff_new_player.h */; };
+		ACBCBCFE27427FC90074D355 /* ff_new_player_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = ACBCBCFC27427FC90074D355 /* ff_new_player_ios.h */; };
+		ACBCBCFF27427FC90074D355 /* ff_new_player_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = ACBCBCFD27427FC90074D355 /* ff_new_player_ios.m */; };
 		B417F8DE24F7C3B500D159BB /* cJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B417F8DB24F7C3B400D159BB /* cJSON.h */; };
 		B417F8E224F7C56C00D159BB /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = B417F8E124F7C56C00D159BB /* cJSON.c */; };
 		B4449BD6250095700074CEDC /* ijklas.h in Headers */ = {isa = PBXBuildFile; fileRef = B4449BD4250095700074CEDC /* ijklas.h */; };
@@ -332,6 +334,8 @@
 		ACBCBCF32742110E0074D355 /* ff_new_player.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ff_new_player.c; sourceTree = "<group>"; };
 		ACBCBCF42742110E0074D355 /* ff_new_player_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ff_new_player_def.h; sourceTree = "<group>"; };
 		ACBCBCF52742110E0074D355 /* ff_new_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ff_new_player.h; sourceTree = "<group>"; };
+		ACBCBCFC27427FC90074D355 /* ff_new_player_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ff_new_player_ios.h; sourceTree = "<group>"; };
+		ACBCBCFD27427FC90074D355 /* ff_new_player_ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ff_new_player_ios.m; sourceTree = "<group>"; };
 		B417F8DB24F7C3B400D159BB /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cJSON.h; sourceTree = "<group>"; };
 		B417F8E124F7C56C00D159BB /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cJSON.c; sourceTree = "<group>"; };
 		B4449BD4250095700074CEDC /* ijklas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ijklas.h; sourceTree = "<group>"; };
@@ -558,6 +562,8 @@
 				ACBCBCF32742110E0074D355 /* ff_new_player.c */,
 				ACBCBCF42742110E0074D355 /* ff_new_player_def.h */,
 				ACBCBCF52742110E0074D355 /* ff_new_player.h */,
+				ACBCBCFC27427FC90074D355 /* ff_new_player_ios.h */,
+				ACBCBCFD27427FC90074D355 /* ff_new_player_ios.m */,
 			);
 			path = newplayer;
 			sourceTree = "<group>";
@@ -1061,6 +1067,7 @@
 				54CF8A351E1526F800309DD5 /* ijkioapplication.h in Headers */,
 				54CF8A3B1E1526F800309DD5 /* ijkioprotocol.h in Headers */,
 				B4449BD6250095700074CEDC /* ijklas.h in Headers */,
+				ACBCBCFE27427FC90074D355 /* ff_new_player_ios.h in Headers */,
 				E654EAE71B6B295200B0F2D0 /* IJKMediaPlayback.h in Headers */,
 				E654EAED1B6B29C100B0F2D0 /* IJKMediaPlayer.h in Headers */,
 				E6C459961C7030B6004831EC /* internal.h in Headers */,
@@ -1339,6 +1346,7 @@
 				E6C459CC1C70967F004831EC /* renderer_yuv420sp.c in Sources */,
 				E6C459941C7030B6004831EC /* yuv420p.fsh.c in Sources */,
 				E654EAC21B6B287E00B0F2D0 /* ijksdl_error.c in Sources */,
+				ACBCBCFF27427FC90074D355 /* ff_new_player_ios.m in Sources */,
 				E607FFE11B7B62E3005F11A6 /* IJKDeviceModel.m in Sources */,
 				54CF8A361E1526F800309DD5 /* ijkiocache.c in Sources */,
 				E6C459BA1C706A13004831EC /* ijksdl_egl.c in Sources */,

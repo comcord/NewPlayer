@@ -36,6 +36,18 @@ typedef struct PlayerState {
     Decoder auddec;
     Decoder viddec;
     SDL_cond *continue_read_thread;
+    
+    int audio_hw_buf_size;
+    uint8_t *audio_buf;
+    uint8_t *audio_buf1;
+    short *audio_new_buf;  /* for soundtouch buf */
+    unsigned int audio_buf_size; /* in bytes */
+    unsigned int audio_buf1_size;
+    unsigned int audio_new_buf_size;
+    int audio_buf_index; /* in bytes */
+    int audio_write_buf_size;
+    struct AudioParams audio_src;
+    struct SwrContext *swr_ctx;
 
 } PlayerState;
 
@@ -45,6 +57,8 @@ typedef struct NewFFPlayer{
     char *iformat_name;
     SDL_Aout *aout;
     SDL_Vout *vout;
+    Uint32 overlay_format;
+
     
 } NewFFPlayer;
 
