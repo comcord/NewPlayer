@@ -48,7 +48,14 @@ typedef struct PlayerState {
     int audio_write_buf_size;
     struct AudioParams audio_src;
     struct SwrContext *swr_ctx;
+    double audio_clock;
+    double frame_timer;
 
+    Clock audclk;
+    int audio_clock_serial;
+
+    Clock vidclk;
+    Clock extclk;
 } PlayerState;
 
 

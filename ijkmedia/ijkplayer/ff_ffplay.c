@@ -713,7 +713,7 @@ Frame *frame_queue_peek(FrameQueue *f)
     return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
 }
 
-static Frame *frame_queue_peek_next(FrameQueue *f)
+Frame *frame_queue_peek_next(FrameQueue *f)
 {
     return &f->queue[(f->rindex + f->rindex_shown + 1) % f->max_size];
 }
@@ -1069,7 +1069,7 @@ static void video_display2(FFPlayer *ffp)
         video_image_display2(ffp);
 }
 
-static double get_clock(Clock *c)
+double get_clock(Clock *c)
 {
     if (*c->queue_serial != c->serial)
         return NAN;
@@ -1081,7 +1081,7 @@ static double get_clock(Clock *c)
     }
 }
 
-static void set_clock_at(Clock *c, double pts, int serial, double time)
+void set_clock_at(Clock *c, double pts, int serial, double time)
 {
     c->pts = pts;
     c->last_updated = time;
@@ -1089,7 +1089,7 @@ static void set_clock_at(Clock *c, double pts, int serial, double time)
     c->serial = serial;
 }
 
-static void set_clock(Clock *c, double pts, int serial)
+void set_clock(Clock *c, double pts, int serial)
 {
     double time = av_gettime_relative() / 1000000.0;
     set_clock_at(c, pts, serial, time);
@@ -1101,7 +1101,7 @@ static void set_clock_speed(Clock *c, double speed)
     c->speed = speed;
 }
 
-static void init_clock(Clock *c, int *queue_serial)
+void init_clock(Clock *c, int *queue_serial)
 {
     c->speed = 1.0;
     c->paused = 0;
@@ -1109,7 +1109,7 @@ static void init_clock(Clock *c, int *queue_serial)
     set_clock(c, NAN, -1);
 }
 
-static void sync_clock_to_slave(Clock *c, Clock *slave)
+void sync_clock_to_slave(Clock *c, Clock *slave)
 {
     double clock = get_clock(c);
     double slave_clock = get_clock(slave);
@@ -1284,7 +1284,7 @@ static double compute_target_delay(FFPlayer *ffp, double delay, VideoState *is)
     return delay;
 }
 
-static double vp_duration(VideoState *is, Frame *vp, Frame *nextvp) {
+double vp_duration(VideoState *is, Frame *vp, Frame *nextvp) {
     if (vp->serial == nextvp->serial) {
         double duration = nextvp->pts - vp->pts;
         if (isnan(duration) || duration <= 0 || duration > is->max_frame_duration)
