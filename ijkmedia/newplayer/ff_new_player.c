@@ -59,6 +59,7 @@ int packet_queue_put_nullpacket(PacketQueue *q, int stream_index);
 int packet_queue_put_private(PacketQueue *q, AVPacket *pkt);
 int packet_queue_put(PacketQueue *q, AVPacket *pkt);
 int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial);
+int stream_has_enough_packets(AVStream *st, int stream_id, PacketQueue *queue, int min_frames);
 int packet_queue_get_or_buffering(NewFFPlayer *ffp, PacketQueue *q, AVPacket *pkt, int *serial, int *finished){
     assert(finished);
 //    if (!ffp->packet_buffering)
@@ -1438,24 +1439,19 @@ out:
 //         }
 //
 //         /* if the queue are full, no need to read more */
-//         if (ffp->infinite_buffer<1 && !is->seek_req &&
-// #ifdef FFP_MERGE
-//               (is->audioq.size + is->videoq.size + is->subtitleq.size > MAX_QUEUE_SIZE
-// #else
-//               (is->audioq.size + is->videoq.size + is->subtitleq.size > ffp->dcc.max_buffer_size
-// #endif
-//             || (   stream_has_enough_packets(is->audio_st, is->audio_stream, &is->audioq, MIN_FRAMES)
-//                 && stream_has_enough_packets(is->video_st, is->video_stream, &is->videoq, MIN_FRAMES)
-//                 && stream_has_enough_packets(is->subtitle_st, is->subtitle_stream, &is->subtitleq, MIN_FRAMES)))) {
+         if (ffp->infinite_buffer<1 &&
+               (is->audioq.size + is->videoq.size > MAX_QUEUE_SIZE
+             || (   stream_has_enough_packets(is->audio_st, is->audio_stream, &is->audioq, 25)
+                 && stream_has_enough_packets(is->video_st, is->video_stream, &is->videoq, 25)))) {
 //             if (!is->eof) {
-//                 ffp_toggle_buffering(ffp, 0);
+//                // ffp_toggle_buffering(ffp, 0);
 //             }
-//             /* wait 10 ms */
-//             SDL_LockMutex(wait_mutex);
-//             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
-//             SDL_UnlockMutex(wait_mutex);
-//             continue;
-//         }
+             /* wait 10 ms */
+             SDL_LockMutex(wait_mutex);
+             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
+             SDL_UnlockMutex(wait_mutex);
+             continue;
+         }
 //         if ((!is->paused || completed) &&
 //             (!is->audio_st || (is->auddec.finished == is->audioq.serial && frame_queue_nb_remaining(&is->sampq) == 0)) &&
 //             (!is->video_st || (is->viddec.finished == is->videoq.serial && frame_queue_nb_remaining(&is->pictq) == 0))) {

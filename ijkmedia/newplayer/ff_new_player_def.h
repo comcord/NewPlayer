@@ -58,7 +58,7 @@ typedef struct NewFFPlayer{
     SDL_Aout *aout;
     SDL_Vout *vout;
     Uint32 overlay_format;
-
+    int infinite_buffer;
     
 } NewFFPlayer;
 
