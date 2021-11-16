@@ -188,7 +188,7 @@ int packet_queue_put_private(PacketQueue *q, AVPacket *pkt)
     return 0;
 }
 
-static int packet_queue_put(PacketQueue *q, AVPacket *pkt)
+int packet_queue_put(PacketQueue *q, AVPacket *pkt)
 {
     int ret;
 
@@ -202,7 +202,7 @@ static int packet_queue_put(PacketQueue *q, AVPacket *pkt)
     return ret;
 }
 
-static int packet_queue_put_nullpacket(PacketQueue *q, int stream_index)
+int packet_queue_put_nullpacket(PacketQueue *q, int stream_index)
 {
     AVPacket pkt1, *pkt = &pkt1;
     av_init_packet(pkt);
@@ -213,7 +213,7 @@ static int packet_queue_put_nullpacket(PacketQueue *q, int stream_index)
 }
 
 /* packet queue handling */
-static int packet_queue_init(PacketQueue *q)
+int packet_queue_init(PacketQueue *q)
 {
     memset(q, 0, sizeof(PacketQueue));
     q->mutex = SDL_CreateMutex();
@@ -290,7 +290,7 @@ static void packet_queue_start(PacketQueue *q)
 }
 
 /* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
-static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial)
+int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial)
 {
     MyAVPacketList *pkt1;
     int ret;
@@ -362,7 +362,7 @@ static int packet_queue_get_or_buffering(FFPlayer *ffp, PacketQueue *q, AVPacket
     return 1;
 }
 
-static void decoder_init(Decoder *d, AVCodecContext *avctx, PacketQueue *queue, SDL_cond *empty_queue_cond) {
+void decoder_init(Decoder *d, AVCodecContext *avctx, PacketQueue *queue, SDL_cond *empty_queue_cond) {
     memset(d, 0, sizeof(Decoder));
     d->avctx = avctx;
     d->queue = queue;
@@ -667,7 +667,7 @@ static void frame_queue_unref_item(Frame *vp)
     avsubtitle_free(&vp->sub);
 }
 
-static int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last)
+int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last)
 {
     int i;
     memset(f, 0, sizeof(FrameQueue));
@@ -708,7 +708,7 @@ static void frame_queue_signal(FrameQueue *f)
     SDL_UnlockMutex(f->mutex);
 }
 
-static Frame *frame_queue_peek(FrameQueue *f)
+Frame *frame_queue_peek(FrameQueue *f)
 {
     return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
 }
@@ -718,12 +718,12 @@ static Frame *frame_queue_peek_next(FrameQueue *f)
     return &f->queue[(f->rindex + f->rindex_shown + 1) % f->max_size];
 }
 
-static Frame *frame_queue_peek_last(FrameQueue *f)
+Frame *frame_queue_peek_last(FrameQueue *f)
 {
     return &f->queue[f->rindex];
 }
 
-static Frame *frame_queue_peek_writable(FrameQueue *f)
+Frame *frame_queue_peek_writable(FrameQueue *f)
 {
     /* wait until we have space to put a new frame */
     SDL_LockMutex(f->mutex);
@@ -739,7 +739,7 @@ static Frame *frame_queue_peek_writable(FrameQueue *f)
     return &f->queue[f->windex];
 }
 
-static Frame *frame_queue_peek_readable(FrameQueue *f)
+Frame *frame_queue_peek_readable(FrameQueue *f)
 {
     /* wait until we have a readable a new frame */
     SDL_LockMutex(f->mutex);
@@ -755,7 +755,7 @@ static Frame *frame_queue_peek_readable(FrameQueue *f)
     return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
 }
 
-static void frame_queue_push(FrameQueue *f)
+void frame_queue_push(FrameQueue *f)
 {
     if (++f->windex == f->max_size)
         f->windex = 0;
@@ -765,7 +765,7 @@ static void frame_queue_push(FrameQueue *f)
     SDL_UnlockMutex(f->mutex);
 }
 
-static void frame_queue_next(FrameQueue *f)
+void frame_queue_next(FrameQueue *f)
 {
     if (f->keep_last && !f->rindex_shown) {
         f->rindex_shown = 1;
@@ -781,7 +781,7 @@ static void frame_queue_next(FrameQueue *f)
 }
 
 /* return the number of undisplayed frames in the queue */
-static int frame_queue_nb_remaining(FrameQueue *f)
+int frame_queue_nb_remaining(FrameQueue *f)
 {
     return f->size - f->rindex_shown;
 }

@@ -19,6 +19,8 @@
 
 #import "IJKCommon.h"
 #import "IJKMoviePlayerViewController.h"
+#import <IJKMediaFramework/IJKMediaFramework.h>
+
 
 @interface IJKDemoSampleViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -110,10 +112,13 @@
     NSString *url_str = item[1];
     
     if ([url_str containsString:@"adaptationSet"]) {
-        [self.navigationController presentViewController:[[IJKVideoViewController alloc] initWithManifest:url_str] animated:YES completion:^{}];
+//        [self.navigationController presentViewController:[[IJKVideoViewController alloc] initWithManifest:url_str] animated:YES completion:^{}];
+        [self.navigationController presentViewController:[[IJKNewMovieViewController alloc] initWithContentURL:url_str] animated:YES completion:nil];
     } else{
         NSURL   *url  = [NSURL URLWithString:item[1]];
-        [self.navigationController presentViewController:[[IJKVideoViewController alloc] initWithURL:url] animated:YES completion:^{}];
+//        [self.navigationController presentViewController:[[IJKVideoViewController alloc] initWithURL:url] animated:YES completion:^{}];
+        [self.navigationController presentViewController:[[IJKNewMovieViewController alloc] initWithContentURL:item[1]] animated:YES completion:nil];
+
     }
 }
 

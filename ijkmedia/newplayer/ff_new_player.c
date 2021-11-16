@@ -259,7 +259,7 @@ int queue_picture(NewFFPlayer *ffp, AVFrame *src_frame, double pts, double durat
         vp->format != src_frame->format) {
 
         if (vp->width != src_frame->width || vp->height != src_frame->height)
-            ffp_notify_msg3(ffp, FFP_MSG_VIDEO_SIZE_CHANGED, src_frame->width, src_frame->height);
+//            ffp_notify_msg3(ffp, FFP_MSG_VIDEO_SIZE_CHANGED, src_frame->width, src_frame->height);
 
         vp->allocated = 0;
         vp->width = src_frame->width;
@@ -310,7 +310,7 @@ int queue_picture(NewFFPlayer *ffp, AVFrame *src_frame, double pts, double durat
         frame_queue_push(&is->pictq);
         if (!is->viddec.first_frame_decoded) {
             ALOGD("Video: first frame decoded\n");
-            ffp_notify_msg1(ffp, FFP_MSG_VIDEO_DECODED_START);
+           // ffp_notify_msg1(ffp, FFP_MSG_VIDEO_DECODED_START);
             is->viddec.first_frame_decoded_time = SDL_GetTickHR();
             is->viddec.first_frame_decoded = 1;
         }
@@ -327,34 +327,34 @@ Frame *frame_queue_peek(FrameQueue *f);
 
 static void video_image_display2(NewFFPlayer *ffp)
 {
-    VideoState *is = ffp->videoState;
+    PlayerState *is = ffp->videoState;
     Frame *vp;
     Frame *sp = NULL;
 
     vp = frame_queue_peek_last(&is->pictq);
 
     if (vp->bmp) {
-        if (is->subtitle_st) {
-            if (frame_queue_nb_remaining(&is->subpq) > 0) {
-                sp = frame_queue_peek(&is->subpq);
-
-                if (vp->pts >= sp->pts + ((float) sp->sub.start_display_time / 1000)) {
-                    if (!sp->uploaded) {
-                        if (sp->sub.num_rects > 0) {
-                            char buffered_text[4096];
-                            if (sp->sub.rects[0]->text) {
-                                strncpy(buffered_text, sp->sub.rects[0]->text, 4096);
-                            }
-                            else if (sp->sub.rects[0]->ass) {
-                              //  parse_ass_subtitle(sp->sub.rects[0]->ass, buffered_text);
-                            }
-                            ffp_notify_msg4(ffp, FFP_MSG_TIMED_TEXT, 0, 0, buffered_text, sizeof(buffered_text));
-                        }
-                        sp->uploaded = 1;
-                    }
-                }
-            }
-        }
+//        if (is->subtitle_st) {
+//            if (frame_queue_nb_remaining(&is->subpq) > 0) {
+//                sp = frame_queue_peek(&is->subpq);
+//
+//                if (vp->pts >= sp->pts + ((float) sp->sub.start_display_time / 1000)) {
+//                    if (!sp->uploaded) {
+//                        if (sp->sub.num_rects > 0) {
+//                            char buffered_text[4096];
+//                            if (sp->sub.rects[0]->text) {
+//                                strncpy(buffered_text, sp->sub.rects[0]->text, 4096);
+//                            }
+//                            else if (sp->sub.rects[0]->ass) {
+//                              //  parse_ass_subtitle(sp->sub.rects[0]->ass, buffered_text);
+//                            }
+//                          //  ffp_notify_msg4(ffp, FFP_MSG_TIMED_TEXT, 0, 0, buffered_text, sizeof(buffered_text));
+//                        }
+//                        sp->uploaded = 1;
+//                    }
+//                }
+//            }
+//        }
         
 //        if (ffp->render_wait_start && !ffp->start_on_prepared && is->pause_req) {
 //            if (!ffp->first_video_frame_rendered) {
@@ -753,7 +753,7 @@ reload:
 #endif
     if (!is->auddec.first_frame_decoded) {
         ALOGD("avcodec/Audio: first frame decoded\n");
-        ffp_notify_msg1(ffp, FFP_MSG_AUDIO_DECODED_START);
+       // ffp_notify_msg1(ffp, FFP_MSG_AUDIO_DECODED_START);
         is->auddec.first_frame_decoded_time = SDL_GetTickHR();
         is->auddec.first_frame_decoded = 1;
     }
@@ -1054,7 +1054,7 @@ static int decoder_decode_frame(NewFFPlayer *ffp, Decoder *d, AVFrame *frame, AV
 static int audio_thread(void *arg)
 {
     NewFFPlayer *ffp = arg;
-    VideoState *is = ffp->videoState;
+    PlayerState *is = ffp->videoState;
     AVFrame *frame = av_frame_alloc();
     Frame *af;
 
@@ -1090,9 +1090,9 @@ static int audio_thread(void *arg)
     return ret;
 }
 
-static int get_video_frame(FFPlayer *ffp, AVFrame *frame)
+static int get_video_frame(NewFFPlayer *ffp, AVFrame *frame)
 {
-    VideoState *is = ffp->is;
+    PlayerState *is = ffp->videoState;
     int got_picture;
 
 //    ffp_video_statistic_l(ffp);
@@ -1209,6 +1209,8 @@ static int stream_component_open(NewFFPlayer *ffp, int stream_index)
             sample_rate    = avctx->sample_rate;
             nb_channels    = avctx->channels;
             channel_layout = avctx->channel_layout;
+            is->audio_stream = stream_index;
+            is->audio_st = ic->streams[stream_index];
             if ((ret = audio_open(ffp, channel_layout, nb_channels, sample_rate, &is->audio_tgt)) < 0)
                 goto fail;
             decoder_init(&is->auddec, avctx, &is->audioq, is->continue_read_thread);
@@ -1246,7 +1248,7 @@ out:
      AVFormatContext *ic = NULL;
      AVPacket pkt1, *pkt = &pkt1;
      int err, i, ret __unused;
-     int st_index[AVMEDIA_TYPE_NB];
+     int st_index[AVMEDIA_TYPE_NB] = {-1};
      SDL_mutex *wait_mutex = SDL_CreateMutex();
 
 
@@ -1256,8 +1258,8 @@ out:
          ret = AVERROR(ENOMEM);
          goto fail;
      }
-     if (ffp->iformat_name)
-         is->iformat = av_find_input_format(ffp->iformat_name);
+//     if (ffp->iformat_name)
+//         is->iformat = av_find_input_format(ffp->iformat_name);
 //     ic->interrupt_callback.callback = decode_interrupt_cb;
      ic->interrupt_callback.opaque = arg;
      err = avformat_open_input(&ic, is->filename, is->iformat, NULL);
@@ -1277,7 +1279,7 @@ out:
          AVStream *st = ic->streams[i];
          enum AVMediaType type = st->codecpar->codec_type;
          st->discard = AVDISCARD_ALL;
-         if (type >= 0&& st_index[type] == -1)
+         if (type >= 0)
                  st_index[type] = i;
          // choose first h264
 
@@ -1295,6 +1297,8 @@ out:
          st_index[AVMEDIA_TYPE_VIDEO] = first_h264_stream;
          av_log(NULL, AV_LOG_WARNING, "multiple video stream found, prefer first h264 stream: %d\n", first_h264_stream);
      }
+     
+     is->ic = ic;
      
      /* open the streams */
      if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
@@ -1627,6 +1631,9 @@ int  ffp_new_prepare_async_l(NewFFPlayer *ffp, const char *file_name){
     ffp->vout = SDL_VoutIos_CreateForGLES2();
     ffp->aout = SDL_AoutIos_CreateForAudioUnit();
     ffp->overlay_format         = SDL_FCC_RV32;
+    ffp->videoState = is;
+    is->filename = file_name;
+    
     int pictq_size = 10;
     if (frame_queue_init(&is->pictq, &is->videoq, pictq_size, 1) < 0)
         goto fail;

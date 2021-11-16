@@ -20,6 +20,7 @@
 		55E809F31B146DE8003E98A5 /* IJKQRCodeScanViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E809F21B146DE8003E98A5 /* IJKQRCodeScanViewController.xib */; };
 		55E809F61B1480BC003E98A5 /* IJKDemoHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 55E809F51B1480BC003E98A5 /* IJKDemoHistory.m */; };
 		55E809F91B15A1DB003E98A5 /* IJKDemoLocalFolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55E809F81B15A1DB003E98A5 /* IJKDemoLocalFolderViewController.m */; };
+		ACBCBD0327435AA80074D355 /* IJKNewMoveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACBCBD0227435AA80074D355 /* IJKNewMoveViewController.m */; };
 		E60E8C2A19EF70BB005B5B6E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60E8C2919EF70BB005B5B6E /* CoreMedia.framework */; };
 		E612EAE517F7E0F800BEE660 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E612EAE417F7E0F800BEE660 /* MediaPlayer.framework */; };
 		E6166C9C17EDA4A20006B956 /* IJKMediaDemo-Prefix.pch in Resources */ = {isa = PBXBuildFile; fileRef = E6166C9B17EDA4A20006B956 /* IJKMediaDemo-Prefix.pch */; };
@@ -50,6 +51,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		ACBCBD0627435AA90074D355 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E6D74F2918A5F94B00165BFD /* IJKMediaPlayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5450B0431E63EA4300568494;
+			remoteInfo = IJKMediaFrameworkWithSSL;
+		};
 		E654EAD61B6B28B100B0F2D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E6D74F2918A5F94B00165BFD /* IJKMediaPlayer.xcodeproj */;
@@ -93,6 +101,8 @@
 		55E809F51B1480BC003E98A5 /* IJKDemoHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IJKDemoHistory.m; sourceTree = "<group>"; };
 		55E809F71B15A1DB003E98A5 /* IJKDemoLocalFolderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IJKDemoLocalFolderViewController.h; sourceTree = "<group>"; };
 		55E809F81B15A1DB003E98A5 /* IJKDemoLocalFolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IJKDemoLocalFolderViewController.m; sourceTree = "<group>"; };
+		ACBCBD0127435AA80074D355 /* IJKNewMoveViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IJKNewMoveViewController.h; sourceTree = "<group>"; };
+		ACBCBD0227435AA80074D355 /* IJKNewMoveViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IJKNewMoveViewController.m; sourceTree = "<group>"; };
 		E60E8C2919EF70BB005B5B6E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		E612EAE417F7E0F800BEE660 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		E6166C9B17EDA4A20006B956 /* IJKMediaDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IJKMediaDemo-Prefix.pch"; sourceTree = "<group>"; };
@@ -266,6 +276,8 @@
 				55E809EC1B146C1E003E98A5 /* IJKQRCodeScanViewController.h */,
 				55E809ED1B146C1E003E98A5 /* IJKQRCodeScanViewController.m */,
 				55E809F21B146DE8003E98A5 /* IJKQRCodeScanViewController.xib */,
+				ACBCBD0127435AA80074D355 /* IJKNewMoveViewController.h */,
+				ACBCBD0227435AA80074D355 /* IJKNewMoveViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -274,6 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				E654EAD71B6B28B100B0F2D0 /* IJKMediaFramework.framework */,
+				ACBCBD0727435AA90074D355 /* IJKMediaFrameworkWithSSL.framework */,
 				E654EAD91B6B28B100B0F2D0 /* IJKMediaFrameworkTests.xctest */,
 			);
 			name = Products;
@@ -315,6 +328,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = E6903EF317EAF70200CFD954;
@@ -334,6 +348,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		ACBCBD0727435AA90074D355 /* IJKMediaFrameworkWithSSL.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = IJKMediaFrameworkWithSSL.framework;
+			remoteRef = ACBCBD0627435AA90074D355 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E654EAD71B6B28B100B0F2D0 /* IJKMediaFramework.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -386,6 +407,7 @@
 				E6903F1017EAF70200CFD954 /* IJKAppDelegate.m in Sources */,
 				E6F524EB1B183A0700B69DC7 /* IJKDemoSampleViewController.m in Sources */,
 				E6A9B56417EDA72C00A1A500 /* IJKMoviePlayerViewController.m in Sources */,
+				ACBCBD0327435AA80074D355 /* IJKNewMoveViewController.m in Sources */,
 				55E809F11B146C80003E98A5 /* Barcode.m in Sources */,
 				E66F8DCB17EEDD8B00354D80 /* IJKMediaControl.m in Sources */,
 				55E809EA1B145BC2003E98A5 /* IJKDemoInputURLViewController.m in Sources */,
