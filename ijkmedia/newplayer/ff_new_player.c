@@ -896,7 +896,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len){
         //        if (!is->muted && is->audio_buf && is->audio_volume == SDL_MIX_MAXVOLUME)
         //            memcpy(stream, (uint8_t *)is->audio_buf + is->audio_buf_index, len1);
         //        else {
-        memset(stream, 0, len1);
+       // memset(stream, 0, len1);
         ////            if (!is->muted && is->audio_buf)
         ////                SDL_MixAudio(stream, (uint8_t *)is->audio_buf + is->audio_buf_index, len1, is->audio_volume);
         //        }
@@ -1296,6 +1296,7 @@ static int stream_component_open(NewFFPlayer *ffp, int stream_index)
             
             if ((ret = decoder_start(&is->auddec, audio_thread, ffp, "ff_audio_dec")) < 0)
                 goto out;
+            SDL_AoutPauseAudio(ffp->aout, 0);
         }
             break;
         case AVMEDIA_TYPE_VIDEO:{
